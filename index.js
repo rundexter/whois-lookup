@@ -1,13 +1,32 @@
+var whois = require( 'whois' );
+var q     = require( 'q' );
+
 module.exports = {
-    /**
-     * The main entry point for the Dexter module
-     *
-     * @param {AppStep} step Accessor for the configuration for the step using this module.  Use step.input('{key}') to retrieve input data.
-     * @param {AppData} dexter Container for all data used in this workflow.
-     */
     run: function(step, dexter) {
-        var results = { foo: 'bar' };
-        //Call this.complete with the module's output.  If there's an error, call this.fail(message) instead.
-        this.complete(results);
+        var domains = step.input( 'domain' ).toArray();
+
+        var lookups = [ ];
+        domains.forEach( function( domain ) {
+            var deferred = q.defer();
+            whois.lookup( domain, function( err, result ) {
+                if ( err ) { deferred.reject( err ) }
+                else { deferred.resolve( result ) }
+            } );
+
+            lookups.push( deferred );
+        } );
+
+        var self = this;
+        var ret  = [ ];
+
+        q.all( lookups )
+            .then( function( res ) {
+                res.forEach( function( record ) { ret.push( { record: record } ) } );
+                return self.complete( ret );
+            } )
+            .fail( function( err ) {
+                return self.fail( err );
+            } );
     }
+
 };

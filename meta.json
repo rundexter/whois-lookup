@@ -2,25 +2,18 @@
  * Metadata describing the module operation
  */
 {
-    //Required. Inputs the module expects.
     "inputs": [
-        //e.g.
-        /*
         {
-            "id": "from",
-            "title":"From"
+            "id": "domain",
+            "title":"Domain"
         }
-        */
     ],
-    //Required. Outputs the module emits.
     "outputs": [
-      //e.g.
-      /*
         {
-            "id": "from",
-            "title":"From"
+            "id": "record",
+            "title":"Record"
         }
-      */
     ],
-    "title": "Whois Lookup" /* Required.A display name for the module */
+    "icon": "database",
+    "title": "Whois Lookup"
 }
